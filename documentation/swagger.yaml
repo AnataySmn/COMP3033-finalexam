@@ -1,0 +1,90 @@
+openapi: 3.0.0
+info:
+  version: 2.0.0
+  title: Restaurant API
+  description: API for managing restaurants
+  termsOfService: http://example.com/terms/
+  contact:
+    name: API Support
+    url: http://example.com/support
+    email: support@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:3000/api
+    description: Local development server
+
+paths:
+  /restaurants:
+    get:
+      summary: List all restaurants
+      responses:
+        '200':
+          description: A list of restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+    post:
+      summary: Create a new restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Restaurant'
+      responses:
+        '201':
+          description: Restaurant created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+
+  /restaurants/{id}:
+    delete:
+      summary: Delete a restaurant by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the restaurant
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Restaurant deleted
+
+components:
+  schemas:
+    Restaurant:
+      type: object
+      required:
+        - name
+        - address
+        - phoneNumber
+        - emailAddress
+        - rating
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the restaurant
+        name:
+          type: string
+          description: Name of the restaurant
+        address:
+          type: string
+          description: Address of the restaurant
+        phoneNumber:
+          type: string
+          description: Phone number of the restaurant
+        emailAddress:
+          type: string
+          description: Email address of the restaurant
+        rating:
+          type: integer
+          format: int32
+          description: Rating of the restaurant (1-10)
