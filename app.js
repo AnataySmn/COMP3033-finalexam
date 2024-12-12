@@ -3,6 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
+const globals = require('./config/globals');
+const restaurantsRouter = require('./routes/restaurants');
+const swaggerUi = require('swagger-ui-express');
+const yaml = require('yamljs');
+
+const swaggerDocument = yaml.load('./documentation/swagger.yaml');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -21,6 +28,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/', restaurantsRouter);
+
+app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -37,5 +49,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// MongoDB Connection
+mongoose.connect(globals.connectionStrings.MongoDB, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
+
 
 module.exports = app;
